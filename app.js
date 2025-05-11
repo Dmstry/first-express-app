@@ -1,24 +1,16 @@
 const express = require('express');
 
 const { contactsController } = require('./controllers');
-const { validate } = require('./middleware');
+const { validate, errorHandlers } = require('./middleware');
 
 const app = express();
 
 // Middleware to parse json to js-object
 app.use(express.json());
 
-app.get(
-  '/',
-  (req, res, next) => {
-    console.log('handler 1 :>> ');
-    next();
-  },
-  (req, res) => {
-    console.log('handler 2 :>> ');
-    res.send('<h1>Hello Express</h1>');
-  }
-);
+app.get('/', (req, res) => {
+  res.send('<h1>Hello Express</h1>');
+});
 
 // CRUD
 app.get('/contacts', contactsController.getContacts);
@@ -38,5 +30,7 @@ app.patch(
 );
 
 app.delete('/contacts/:id', contactsController.deleteContact);
+
+app.use(errorHandlers.validationErrorHandler, errorHandlers.errorHandler);
 
 module.exports = app;
